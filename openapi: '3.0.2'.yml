@@ -1,12 +1,354 @@
 openapi: "3.0.2"
 info:
-  title: API Title
-  version: "1.0"
+  title: Wildberries articul tracer API
+  version: "0.0.1"
 servers:
-  - url: https://api.server.test/v1
+  - url: https://localhost:8000/api/v1/
+    description: Dev server
 paths:
-  /test:
+  /login:
+    post:
+      summary: Вход в систему
+      description: После успешного входа в систему необходимо установить JWT token
+      operationId: loginPost
+  /article:
     get:
+      summary: Получение всех артикулов по подписке
+      description: Метод получения всех артикулов по подписке
+      operationId: getUser
+      tags:
+        - "Article"
       responses:
         "200":
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrentUserResponseModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseModel"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseModel"
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseModel"
+  /article/{name}:
+    get:
+      summary: Получение динамики цен по определенному артикулу
+      description: Метод получения динамики цен по определенному артикулу на который подписан пользователь
+      operationId: getArticle
+      parameters:
+        - name: name
+          in: path
+          required: true
+          example: 12345
+          schema:
+            type: integer
+      tags:
+        - "Article"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrentArticlePriceResponseModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseModel"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseModel"
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseModel"
+    post:
+      summary: Добавить новый артикул в подписку
+      description: Метод добавляет новый артикул в подписку
+      operationId: postArticle
+      parameters: 
+        - name: name
+          in: path
+          required: true
+          example: 12345
+          schema:
+            type: integer
+      tags:
+        - "Article"
+      responses:
+        "201":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrentUserResponseModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseModel"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseModel"
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseModel"
+    patch:
+      summary: Обновить дату отслеживания на текущую
+      description: Метод обновляет дату отслеживания на текущую
+      operationId: updateArticle
+      parameters: 
+        - name: name
+          in: path
+          required: true
+          example: 12345
+          schema:
+            type: integer
+      tags:
+        - "Article"
+      responses:
+        "200":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrentUserResponseModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseModel"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseModel"
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseModel"
+    delete:
+      summary: Удаляет артикул из подписки
+      description: Метод удаляет артикул из подписки
+      operationId: delArticle
+      parameters: 
+        - name: name
+          in: path
+          required: true
+          example: 12345
+          schema:
+            type: integer
+      tags:
+        - "Article"
+      responses:
+        "204":
+          description: Successful Response
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrentUserResponseModel"
+        "401":
+          description: Unauthorized
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseModel"
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseModel"
+components:
+  schemas:
+    ArticlesModel:
+      title: ArticlesModel
+      type: object
+      required:
+        - id
+        - article_name
+      properties:
+        id:
+          type: integer
+          example: 1
+        article_name:
+          type: integer
+          example: 123587
+    UsersModel:
+      title: UsersModel
+      type: object
+      required:
+        - id
+        - username
+        - password
+      properties:
+        id:
+          type: integer
+          example: 1
+        username:
+          type: string
+          example: username
+        password:
+          type: string
+          example: QWEasd123!
+        firstname:
+          type: string
+          example: firstname
+        lastname:
+          type: string
+          example: lastname
+    UsersArticlesModel:
+      title: UsersArticlesModel
+      type: object
+      required:
+        - user_id
+        - article_id
+        - created_at
+      properties:
+        user_id:
+          title: "User ID"
+          type: integer
+          example: 1
+        article_id:
+          title: "Article ID"
+          type: integer
+          example: 3
+        created_at:
+          title: "Created at"
+          type: string
+          format: date
+          example: 2022-08-23
+    PricesArticlesModel:
+      title: PricesArticlesModel
+      type: object
+      required:
+        - article_id
+        - date
+        - price
+      properties:
+        article_id:
+          title: "Article ID"
+          type: integer
+          example: 1
+        date:
+          title: "Date"
+          type: string
+          format: date
+          example: 2022-08-23
+        price:
+          title: "Price"
+          type: number
+          example: 3.5
+    ArticlesListModel:
+      title: ArticlesListModel
+      type: object
+      required:
+        - article_name
+        - created_at
+      properties:
+        article_name:
+          title: Article 
+          type: integer
+          example: 123587
+        created_at:
+          title: Created at
+          type: string
+          format: date
+          example: 2022-08-23
+    PricesListModel:
+      title: PricesListModel
+      type: object
+      required:
+        - date
+        - price
+      properties:
+        date:
+          title: Date
+          type: string
+          format: date
+          example: 2022-08-23
+        price:
+          title: Price
+          type: number
+          example: 3.50
+    CurrentUserResponseModel:
+      title: CurrentUserResponseModel
+      type: object
+      required:
+        - firstname
+        - lastname
+        - articles
+      properties:
+        firstname:
+          title: Firstname
+          type: string
+        lastname:
+          title: Lastname
+          type: string
+        articles:
+          title: Articles
+          type: array
+          items:
+            $ref: "#/components/schemas/ArticlesListModel"
+    CurrentArticlePriceResponseModel:
+      title: CurrentArticlePriceResponseModel
+      type: object
+      required:
+        - article_name
+        - price
+      properties:
+        firstname:
+          title: Firstname
+          type: string
+        lastname:
+          title: Lastname
+          type: string
+        articles:
+          title: Articles
+          type: array
+          items:
+            $ref: "#/components/schemas/PricesListModel"
+    ErrorResponseModel:
+      title: ErrorResponseModel
+      type: object
+      required:
+        - code
+        - message
+      properties:
+        code:
+          title: Code
+          type: integer
+        message:
+          title: Message
+          type: string
