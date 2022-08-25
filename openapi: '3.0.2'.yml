@@ -6,11 +6,83 @@ servers:
   - url: https://localhost:8000/api/v1/
     description: Dev server
 paths:
+  /register:
+      post:
+        summary: Регистрация в системе
+        description: Метод для регистрации в системе
+        operationId: registerPost
+        tags:
+          - "Auth"
+        requestBody:
+          required: true
+          content:
+            application/json:
+              schema:
+                  $ref: "#/components/schemas/RegisternModel"
+        responses:
+          "200":
+            description: OK
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/CurrentUserResponseModel"
+          "400":
+            description: Bad Request
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/ErrorResponseModel"
+          "422":
+            description: Validation Error
+            content:
+              application/json:
+                schema:
+                  $ref: "#/components/schemas/ErrorResponseModel"
   /login:
     post:
       summary: Вход в систему
       description: После успешного входа в систему необходимо установить JWT token
       operationId: loginPost
+      tags:
+        - "Auth"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+                $ref: "#/components/schemas/LoginModel"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CurrentUserResponseModel"
+        "400":
+          description: Bad Request
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseModel"
+        "422":
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponseModel"
+  /logout:
+    get:
+      summary: Выход из системы
+      description: При успешном выходе надо удалить JWT token
+      operationId: logoutPost
+      tags:
+        - "Auth"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema: {}
   /article:
     get:
       summary: Получение всех артикулов по подписке
@@ -352,3 +424,36 @@ components:
         message:
           title: Message
           type: string
+    LoginModel:
+      title: LoginModel
+      type: object
+      required:
+        - username
+        - password
+      properties:
+        username:
+          title: Username
+          type: string
+        password:
+          title: Password
+          type: string
+    RegisternModel:
+      title: RegisternModel
+      type: object
+      required:
+        - username
+        - password
+        - password_1
+      properties:
+        username:
+          title: Username
+          type: string
+          example: user1
+        password:
+          title: Password
+          type: string
+          example: QWEasd123!
+        password_1:
+          title: Password
+          type: string
+          example: QWEasd123!
